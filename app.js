@@ -31,18 +31,65 @@ app.post('/productos', (req, res)=>{
     })
 
 
-app.put('/productos', (req, res)=>{
-        res.send('actualizando un producto')
+app.put('/productos/:id', (req, res)=>{
+       // res.send('actualizando un producto')
+       const prodEncontrado = productos.find((p)=>p.id==req.params.id)
+
+        if(!prodEncontrado){
+          return res.status(404),res.json('No se encuentra el producto')
+        }
+
+        console.log(req.params.id)
+        console.log(req.body)
+        const nuevosDatos =req.body
+
+        productos =productos.map(p=>p.id==req.params.id?{...p,...nuevosDatos}:p)
+        res.json('productos actualizados')
+
       })
 
-app.delete('/productos', (req, res)=>{
-        res.send('eliminando un producto')
-      })
+app.delete('/productos/:id', (req, res)=>{
+        //res.send('eliminando un producto')
+        const prodEncontrado = productos.find((p)=>p.id==req.params.id)
+
+        if(!prodEncontrado){
+          return res.status(404),res.json('No se encuentra el producto')
+        }
+
+        productos = productos.filter((p)=>p.id!=req.params.id)
+        res.json('producto eliminado')
+        console.log(productos)
+        
+
+})
 
 app.get('/productos/:id', (req, res)=>{
-        console.log(req.params)
-        res.send('mostrando un producto')
-      })
+        console.log(req.params.id)
+        //res.send('mostrando un producto')
+
+//forma larga
+
+//const prodEncontrado = productos.find((producto)=>{
+  //return producto.id == req.params.id
+//})
+
+//forma corta
+
+const prodEncontrado = productos.find((p)=>p.id==req.params.id)
+
+        if(!prodEncontrado){
+          return res.status(404),res.json('No se encuentra el producto')
+        }else{
+  return res.json({
+    "mensaje": "producto encontrado",
+    "producto": prodEncontrado
+  })
+}
+
+
+
+
+})
 
 app.listen(3000, ()=>{
     console.log(`servidor corriendo en el puerto ${port}`)
